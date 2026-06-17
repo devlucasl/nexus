@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Login</title>
+    <link rel="stylesheet" th:href="@{/css/nexus.css}">
+</head>
+<body class="login-body">
+<main class="login-card">
+    <div class="brand">
+        <div class="brand-mark">NX</div>
+        <div>
+            <h1>NEXUS</h1>
+            <p class="subtitle">Gestão Inteligente de Estoque</p>
+        </div>
+    </div>
+
+    <div th:if="${param.error}" class="alert alert-error">Login ou senha inválidos.</div>
+    <div th:if="${param.logout}" class="alert alert-success">Sessão encerrada com sucesso.</div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="field">
+            <label for="username">Login</label>
+            <input id="username" name="username" placeholder="admin" required autofocus>
+        </div>
+        <div class="field">
+            <label for="password">Senha</label>
+            <input id="password" name="password" type="password" placeholder="admin123" required>
+        </div>
+        <button class="btn btn-primary full" type="submit">Entrar no sistema</button>
+    </form>
+
+    <p class="hint">
+        Usuário administrador: <strong>admin / admin123</strong><br>
+        Usuário funcionário: <strong>funcionario / func123</strong>
+    </p>
+</main>
+</body>
+</html>

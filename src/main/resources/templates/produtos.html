@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Produtos</title><link rel="stylesheet" th:href="@{/css/nexus.css}">
+</head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments :: sidebar('produtos')}"></div>
+    <main class="main">
+        <div class="topbar"><div><h2>Produtos</h2><p>Cadastro, consulta, edição, exclusão lógica e disponibilidade.</p></div></div>
+        <div th:replace="~{fragments :: alerts}"></div>
+
+        <section class="card" sec:authorize="hasRole('ADMINISTRADOR')">
+            <div class="section-title"><h3>Novo produto</h3></div>
+            <form th:action="@{/produtos/criar}" method="post" class="form-grid">
+                <div class="field"><label>Código</label><input name="codigo" required></div>
+                <div class="field"><label>Descrição</label><input name="descricao" required></div>
+                <div class="field"><label>Preço de venda</label><input name="precoVenda" type="number" step="0.01" min="0.01" required></div>
+                <div class="field"><label>Quantidade atual</label><input name="quantidadeAtual" type="number" min="0" required></div>
+                <div class="field"><label>Estoque mínimo</label><input name="estoqueMinimo" type="number" min="0" required></div>
+                <div class="field"><label>Categoria</label><select name="categoriaId" required><option value="">Selecione</option><option th:each="c : ${categorias}" th:value="${c.id}" th:text="${c.nome}"></option></select></div>
+                <div class="field"><label>Fornecedor</label><select name="fornecedorId"><option value="">Sem fornecedor</option><option th:each="f : ${fornecedores}" th:value="${f.id}" th:text="${f.nome}"></option></select></div>
+                <div class="field"><label>Disponibilidade inicial</label><select name="disponivel"><option value="true">Disponível</option><option value="false">Indisponível</option></select></div>
+                <div class="actions"><button class="btn btn-primary" type="submit">Cadastrar produto</button></div>
+            </form>
+        </section>
+
+        <section class="card mt">
+            <div class="section-title">
+                <h3>Lista de produtos</h3>
+                <form th:action="@{/produtos}" method="get" class="actions"><input name="nome" th:value="${nomeBusca}" placeholder="Pesquisar por nome"><button class="btn btn-primary" type="submit">Buscar</button></form>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Código</th><th>Descrição</th><th>Preço</th><th>Qtd.</th><th>Mín.</th><th>Categoria</th><th>Status</th><th sec:authorize="hasRole('ADMINISTRADOR')">Ações</th></tr></thead>
+                    <tbody>
+                    <tr th:each="p : ${produtos}">
+                        <td th:text="${p.codigo}"></td>
+                        <td>
+                            <strong th:text="${p.descricao}"></strong><br>
+                            <span class="muted" th:text="${p.fornecedor == null ? 'Sem fornecedor' : p.fornecedor.nome}"></span>
+                        </td>
+                        <td th:text="${#numbers.formatCurrency(p.precoVenda)}"></td>
+                        <td th:text="${p.quantidadeAtual}"></td>
+                        <td th:text="${p.estoqueMinimo}"></td>
+                        <td th:text="${p.categoria.nome}"></td>
+                        <td><span class="badge" th:classappend="${p.disponivel} ? 'ok' : 'no'" th:text="${p.statusDisponibilidade}"></span><br><span th:if="${p.estoqueBaixo}" class="badge warn mt">Estoque baixo</span></td>
+                        <td sec:authorize="hasRole('ADMINISTRADOR')">
+                            <details>
+                                <summary class="btn btn-sm">Editar</summary>
+                                <form th:action="@{/produtos/{id}/editar(id=${p.id})}" method="post" class="form-grid two mt">
+                                    <div class="field"><label>Código</label><input name="codigo" th:value="${p.codigo}" required></div>
+                                    <div class="field"><label>Descrição</label><input name="descricao" th:value="${p.descricao}" required></div>
+                                    <div class="field"><label>Preço</label><input name="precoVenda" type="number" step="0.01" th:value="${p.precoVenda}" required></div>
+                                    <div class="field"><label>Quantidade</label><input name="quantidadeAtual" type="number" th:value="${p.quantidadeAtual}" required></div>
+                                    <div class="field"><label>Estoque mínimo</label><input name="estoqueMinimo" type="number" th:value="${p.estoqueMinimo}" required></div>
+                                    <div class="field"><label>Categoria</label><select name="categoriaId" required><option th:each="c : ${categorias}" th:value="${c.id}" th:selected="${c.id == p.categoria.id}" th:text="${c.nome}"></option></select></div>
+                                    <div class="field"><label>Fornecedor</label><select name="fornecedorId"><option value="">Sem fornecedor</option><option th:each="f : ${fornecedores}" th:value="${f.id}" th:selected="${p.fornecedor != null && f.id == p.fornecedor.id}" th:text="${f.nome}"></option></select></div>
+                                    <div class="field"><label>Disponível</label><select name="disponivel"><option value="true" th:selected="${p.disponivel}">Sim</option><option value="false" th:selected="${!p.disponivel}">Não</option></select></div>
+                                    <div class="actions"><button class="btn btn-primary" type="submit">Salvar</button></div>
+                                </form>
+                            </details>
+                            <div class="actions mt">
+                                <form class="inline-form" th:action="@{/produtos/{id}/disponibilidade(id=${p.id})}" method="post"><input type="hidden" name="disponivel" th:value="${!p.disponivel}"><button class="btn btn-sm btn-yellow" type="submit" th:text="${p.disponivel ? 'Inativar' : 'Ativar'}"></button></form>
+                                <form class="inline-form" th:action="@{/produtos/{id}/excluir(id=${p.id})}" method="post"><button class="btn btn-sm btn-danger" type="submit">Excluir</button></form>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(produtos)}"><td colspan="8" class="muted">Nenhum produto encontrado.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Estoque</title><link rel="stylesheet" th:href="@{/css/nexus.css}">
+</head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments :: sidebar('estoque')}"></div>
+    <main class="main">
+        <div class="topbar"><div><h2>Estoque</h2><p>Entrada, saída, ajuste manual, movimentações e auditoria.</p></div></div>
+        <div th:replace="~{fragments :: alerts}"></div>
+
+        <section class="grid">
+            <form class="card" th:action="@{/estoque/entrada}" method="post">
+                <div class="section-title"><h3>Entrada</h3></div>
+                <div class="field"><label>Produto</label><select name="produtoId" required><option value="">Selecione</option><option th:each="p : ${produtos}" th:value="${p.id}" th:selected="${p.id == produtoSelecionadoId}" th:text="${p.codigo + ' - ' + p.descricao}"></option></select></div>
+                <div class="field"><label>Quantidade</label><input name="quantidade" type="number" min="1" required></div>
+                <div class="field"><label>Observação</label><input name="observacao" placeholder="Compra, reposição etc."></div>
+                <button class="btn btn-green full" type="submit">Registrar entrada</button>
+            </form>
+            <form class="card" th:action="@{/estoque/saida}" method="post">
+                <div class="section-title"><h3>Saída</h3></div>
+                <div class="field"><label>Produto</label><select name="produtoId" required><option value="">Selecione</option><option th:each="p : ${produtos}" th:value="${p.id}" th:selected="${p.id == produtoSelecionadoId}" th:text="${p.codigo + ' - ' + p.descricao}"></option></select></div>
+                <div class="field"><label>Quantidade</label><input name="quantidade" type="number" min="1" required></div>
+                <div class="field"><label>Observação</label><input name="observacao" placeholder="Perda, consumo interno etc."></div>
+                <button class="btn btn-yellow full" type="submit">Registrar saída</button>
+            </form>
+            <form class="card" th:action="@{/estoque/ajuste}" method="post">
+                <div class="section-title"><h3>Ajuste manual</h3></div>
+                <div class="field"><label>Produto</label><select name="produtoId" required><option value="">Selecione</option><option th:each="p : ${produtos}" th:value="${p.id}" th:selected="${p.id == produtoSelecionadoId}" th:text="${p.codigo + ' - ' + p.descricao}"></option></select></div>
+                <div class="field"><label>Nova quantidade</label><input name="novaQuantidade" type="number" min="0" required></div>
+                <div class="field"><label>Justificativa</label><input name="justificativa" required placeholder="Motivo obrigatório"></div>
+                <button class="btn btn-primary full" type="submit">Registrar ajuste</button>
+            </form>
+            <form class="card" th:action="@{/estoque}" method="get">
+                <div class="section-title"><h3>Histórico</h3></div>
+                <div class="field"><label>Produto</label><select name="produtoId" required><option value="">Selecione</option><option th:each="p : ${produtos}" th:value="${p.id}" th:selected="${p.id == produtoSelecionadoId}" th:text="${p.codigo + ' - ' + p.descricao}"></option></select></div>
+                <button class="btn full" type="submit">Consultar histórico</button>
+            </form>
+        </section>
+
+        <section class="split mt" th:if="${produtoSelecionadoId != null}">
+            <div class="card">
+                <div class="section-title"><h3>Movimentações</h3></div>
+                <div class="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Quantidade</th><th>Usuário</th><th>Observação</th></tr></thead><tbody>
+                <tr th:each="m : ${movimentacoes}"><td th:text="${#temporals.format(m.dataHora, 'dd/MM/yyyy HH:mm')}"></td><td><span class="badge" th:classappend="${m.tipo == 'ENTRADA'} ? 'ok' : (${m.tipo == 'SAIDA'} ? 'warn' : '')" th:text="${m.tipo}"></span></td><td th:text="${m.quantidade}"></td><td th:text="${m.usuario}"></td><td th:text="${m.observacao}"></td></tr>
+                <tr th:if="${#lists.isEmpty(movimentacoes)}"><td colspan="5" class="muted">Nenhuma movimentação encontrada.</td></tr>
+                </tbody></table></div>
+            </div>
+            <div class="card">
+                <div class="section-title"><h3>Auditoria de ajustes</h3></div>
+                <div class="table-wrap"><table><thead><tr><th>Data</th><th>Anterior</th><th>Nova</th><th>Usuário</th><th>Justificativa</th></tr></thead><tbody>
+                <tr th:each="h : ${historicos}"><td th:text="${#temporals.format(h.dataHora, 'dd/MM/yyyy HH:mm')}"></td><td th:text="${h.quantidadeAnterior}"></td><td th:text="${h.quantidadeNova}"></td><td th:text="${h.usuario}"></td><td th:text="${h.justificativa}"></td></tr>
+                <tr th:if="${#lists.isEmpty(historicos)}"><td colspan="5" class="muted">Nenhum ajuste manual encontrado.</td></tr>
+                </tbody></table></div>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

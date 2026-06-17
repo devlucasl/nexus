@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>NEXUS | Fornecedores</title><link rel="stylesheet" th:href="@{/css/nexus.css}"></head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments :: sidebar('fornecedores')}"></div>
+    <main class="main">
+        <div class="topbar"><div><h2>Fornecedores</h2><p>Cadastro e manutenção de fornecedores com contato obrigatório.</p></div></div>
+        <div th:replace="~{fragments :: alerts}"></div>
+        <section class="card">
+            <div class="section-title"><h3>Novo fornecedor</h3></div>
+            <form th:action="@{/fornecedores/criar}" method="post" class="form-grid">
+                <div class="field"><label>Nome</label><input name="nome" required></div>
+                <div class="field"><label>Telefone</label><input name="telefone"></div>
+                <div class="field"><label>E-mail</label><input name="email" type="email"></div>
+                <div class="actions"><button class="btn btn-primary" type="submit">Cadastrar fornecedor</button></div>
+            </form>
+        </section>
+        <section class="card mt">
+            <div class="section-title"><h3>Fornecedores ativos</h3></div>
+            <div class="table-wrap"><table><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Ações</th></tr></thead><tbody>
+            <tr th:each="f : ${fornecedores}">
+                <td th:text="${f.nome}"></td><td th:text="${f.telefone}"></td><td th:text="${f.email}"></td>
+                <td><details><summary class="btn btn-sm">Editar</summary><form th:action="@{/fornecedores/{id}/editar(id=${f.id})}" method="post" class="form-grid mt"><div class="field"><label>Nome</label><input name="nome" th:value="${f.nome}" required></div><div class="field"><label>Telefone</label><input name="telefone" th:value="${f.telefone}"></div><div class="field"><label>E-mail</label><input name="email" type="email" th:value="${f.email}"></div><div class="actions"><button class="btn btn-primary" type="submit">Salvar</button></div></form></details></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(fornecedores)}"><td colspan="4" class="muted">Nenhum fornecedor cadastrado.</td></tr>
+            </tbody></table></div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

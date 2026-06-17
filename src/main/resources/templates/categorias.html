@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>NEXUS | Categorias</title><link rel="stylesheet" th:href="@{/css/nexus.css}"></head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments :: sidebar('categorias')}"></div>
+    <main class="main">
+        <div class="topbar"><div><h2>Categorias</h2><p>Cadastro de categorias para organização e filtro dos produtos.</p></div></div>
+        <div th:replace="~{fragments :: alerts}"></div>
+        <section class="card">
+            <div class="section-title"><h3>Nova categoria</h3></div>
+            <form th:action="@{/categorias/criar}" method="post" class="form-grid two">
+                <div class="field"><label>Nome</label><input name="nome" required></div>
+                <div class="field"><label>Descrição</label><input name="descricao"></div>
+                <div class="actions"><button class="btn btn-primary" type="submit">Cadastrar categoria</button></div>
+            </form>
+        </section>
+        <section class="card mt">
+            <div class="section-title"><h3>Categorias ativas</h3></div>
+            <div class="table-wrap"><table><thead><tr><th>Nome</th><th>Descrição</th><th>Status</th></tr></thead><tbody>
+            <tr th:each="c : ${categorias}"><td th:text="${c.nome}"></td><td th:text="${c.descricao}"></td><td><span class="badge ok">Ativa</span></td></tr>
+            <tr th:if="${#lists.isEmpty(categorias)}"><td colspan="3" class="muted">Nenhuma categoria cadastrada.</td></tr>
+            </tbody></table></div>
+        </section>
+    </main>
+</div>
+</body>
+</html>
