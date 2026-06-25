@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('NEXUS | Login')}"></head>
+<body class="login-body">
+<main class="login-card">
+    <div class="brand login-brand">
+        <div class="brand-mark">NX</div>
+        <div>
+            <h1>NEXUS</h1>
+            <p class="subtitle">Gestão Inteligente de Estoque</p>
+        </div>
+    </div>
+
+    <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
+    <div th:if="${param.error}" class="alert alert-error">Login ou senha inválidos.</div>
+    <div th:if="${param.logout}" class="alert alert-success">Sessão encerrada com sucesso.</div>
+
+    <form th:action="@{/login}" method="post" autocomplete="off">
+        <div class="field">
+            <label for="username">Login</label>
+            <input id="username" name="username" placeholder="Digite seu login" required autofocus>
+        </div>
+
+        <div class="field">
+            <label for="password">Senha</label>
+            <input id="password" name="password" type="password" placeholder="Digite sua senha" required>
+        </div>
+
+        <button class="btn btn-primary full" type="submit">Entrar no sistema</button>
+    </form>
+
+    <div class="auth-divider">
+        <span>ou</span>
+    </div>
+
+    <a class="btn btn-secondary full" th:href="@{/cadastro}">
+        Criar nova conta
+    </a>
+
+    <p class="hint">
+        Admin: <strong>admin / admin123</strong><br>
+        Funcionário: <strong>funcionario / func123</strong>
+    </p>
+</main>
+</body>
+</html>

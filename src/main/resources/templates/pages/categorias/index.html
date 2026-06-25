@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('NEXUS | Categorias')}"></head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments/layout :: sidebar('categorias')}"></div>
+
+    <main class="main">
+        <div th:replace="~{fragments/layout :: pageHeader('Categorias', 'Organize os produtos em grupos para facilitar consulta e filtros.')}"></div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="card" id="lista-categorias">
+            <div class="section-title">
+                <div>
+                    <h3>Categorias ativas</h3>
+                    <p>Categorias disponíveis para vincular aos produtos.</p>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="c : ${categorias}">
+                        <td><strong th:text="${c.nome}">Categoria</strong></td>
+                        <td th:text="${c.descricao == null || #strings.isEmpty(c.descricao) ? 'Sem descrição' : c.descricao}"></td>
+                        <td><span class="badge ok">Ativa</span></td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(categorias)}">
+                        <td colspan="3" class="muted">Nenhuma categoria cadastrada.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <details class="card mt add-form-panel" id="form-categoria">
+            <summary class="btn btn-primary">+ Adicionar categoria</summary>
+
+            <div class="add-form-content">
+                <div class="section-title">
+                    <div>
+                        <h3>Adicionar categoria</h3>
+                        <p>O nome é obrigatório e deve ser único.</p>
+                    </div>
+                </div>
+
+                <form th:action="@{/categorias/criar}" method="post" class="form-grid two">
+                    <div class="field">
+                        <label>Nome</label>
+                        <input name="nome" placeholder="Ex.: Eletrônicos" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Descrição</label>
+                        <input name="descricao" placeholder="Descrição opcional">
+                    </div>
+
+                    <div class="actions form-action">
+                        <button class="btn btn-primary" type="submit">Cadastrar categoria</button>
+                    </div>
+                </form>
+            </div>
+        </details>
+    </main>
+</div>
+</body>
+</html>

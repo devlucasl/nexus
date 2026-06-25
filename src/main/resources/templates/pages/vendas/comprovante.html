@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('NEXUS | Comprovante')}"></head>
+<body>
+<div class="app">
+  <div th:replace="~{fragments/layout :: sidebar('vendas')}"></div>
+
+  <main class="main">
+    <div class="topbar print-hide">
+      <div>
+        <h2>Comprovante</h2>
+        <p th:text="${pedido.numero}">PED-000</p>
+      </div>
+
+      <div class="actions">
+        <button onclick="window.print()" class="btn btn-primary" type="button">Imprimir</button>
+        <a class="btn" th:href="@{/vendas}">Voltar</a>
+      </div>
+    </div>
+
+    <section class="receipt-card">
+      <div class="receipt-header">
+        <div class="brand-mark">NX</div>
+        <div>
+          <h1>NEXUS</h1>
+          <p>Comprovante de venda</p>
+        </div>
+      </div>
+
+      <div class="receipt-meta">
+        <span><strong>Pedido:</strong> <span th:text="${pedido.numero}"></span></span>
+        <span><strong>Status:</strong> <span th:text="${pedido.status}"></span></span>
+        <span><strong>Atendente:</strong> <span th:text="${pedido.usuario}"></span></span>
+        <span th:if="${pedido.dataFinalizacao != null}">
+                    <strong>Data:</strong>
+                    <span th:text="${#temporals.format(pedido.dataFinalizacao, 'dd/MM/yyyy HH:mm')}"></span>
+                </span>
+      </div>
+
+      <table class="receipt-table">
+        <thead>
+        <tr>
+          <th>Item</th>
+          <th>Qtd.</th>
+          <th>Valor unit.</th>
+          <th>Subtotal</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="item : ${pedido.itens}">
+          <td>
+            <strong th:text="${item.codigoProduto}"></strong>
+            -
+            <span th:text="${item.descricaoProduto}"></span>
+          </td>
+          <td th:text="${item.quantidade}"></td>
+          <td th:text="${#numbers.formatCurrency(item.precoFinalUnitario)}"></td>
+          <td th:text="${#numbers.formatCurrency(item.subtotal)}"></td>
+        </tr>
+        </tbody>
+
+        <tfoot>
+        <tr>
+          <td colspan="3">Total</td>
+          <td th:text="${#numbers.formatCurrency(pedido.valorTotal)}"></td>
+        </tr>
+        </tfoot>
+      </table>
+
+      <pre class="receipt-text" th:text="${comprovanteTexto}"></pre>
+    </section>
+  </main>
+</div>
+</body>
+</html>

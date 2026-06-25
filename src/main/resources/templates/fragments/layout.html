@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">NEXUS</title>
+    <link rel="stylesheet" th:href="@{/css/nexus.css}">
+</head>
+<body>
+<aside class="sidebar" th:fragment="sidebar(active)">
+    <div class="brand sidebar-brand">
+        <div class="brand-mark">NX</div>
+        <div>
+            <h1>NEXUS</h1>
+            <small>Gestão Inteligente</small>
+        </div>
+    </div>
+
+    <div class="user-box">
+        <span class="user-label">Usuário</span>
+        <strong sec:authentication="name">usuário</strong>
+    </div>
+
+    <nav class="nav">
+        <a th:classappend="${active == 'dashboard'} ? 'active'" th:href="@{/dashboard}">Dashboard</a>
+        <a th:classappend="${active == 'produtos'} ? 'active'" th:href="@{/produtos}">Produtos</a>
+        <a th:classappend="${active == 'vendas'} ? 'active'" th:href="@{/vendas}">Vendas</a>
+
+        <a sec:authorize="hasRole('ADMINISTRADOR')" th:classappend="${active == 'estoque'} ? 'active'" th:href="@{/estoque}">Estoque</a>
+        <a sec:authorize="hasRole('ADMINISTRADOR')" th:classappend="${active == 'promocoes'} ? 'active'" th:href="@{/promocoes}">Promoções</a>
+        <a sec:authorize="hasRole('ADMINISTRADOR')" th:classappend="${active == 'relatorios'} ? 'active'" th:href="@{/relatorios}">Relatórios</a>
+        <a sec:authorize="hasRole('ADMINISTRADOR')" th:classappend="${active == 'categorias'} ? 'active'" th:href="@{/categorias}">Categorias</a>
+        <a sec:authorize="hasRole('ADMINISTRADOR')" th:classappend="${active == 'fornecedores'} ? 'active'" th:href="@{/fornecedores}">Fornecedores</a>
+
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button class="logout-btn" type="submit">Sair</button>
+        </form>
+    </nav>
+</aside>
+
+<div th:fragment="alerts">
+    <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+</div>
+
+<div class="topbar" th:fragment="pageHeader(title, subtitle)">
+    <div>
+        <h2 th:text="${title}">Título</h2>
+        <p th:text="${subtitle}">Subtítulo</p>
+    </div>
+</div>
+</body>
+</html>

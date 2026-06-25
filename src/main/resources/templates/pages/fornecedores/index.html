@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('NEXUS | Fornecedores')}"></head>
+<body>
+<div class="app">
+  <div th:replace="~{fragments/layout :: sidebar('fornecedores')}"></div>
+
+  <main class="main">
+    <div th:replace="~{fragments/layout :: pageHeader('Fornecedores', 'Gerencie fornecedores vinculáveis aos produtos do estoque.')}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <section class="card" id="lista-fornecedores">
+      <div class="section-title">
+        <div>
+          <h3>Fornecedores ativos</h3>
+          <p>Para cadastrar, informe nome e pelo menos uma forma de contato.</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+            <th>Ações</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr th:each="f : ${fornecedores}">
+            <td><strong th:text="${f.nome}">Fornecedor</strong></td>
+            <td th:text="${f.telefone == null || #strings.isEmpty(f.telefone) ? '-' : f.telefone}"></td>
+            <td th:text="${f.email == null || #strings.isEmpty(f.email) ? '-' : f.email}"></td>
+
+            <td>
+              <details class="inline-details">
+                <summary class="btn btn-sm">Editar</summary>
+
+                <form th:action="@{/fornecedores/{id}/editar(id=${f.id})}" method="post" class="form-grid two floating-form">
+                  <div class="field">
+                    <label>Nome</label>
+                    <input name="nome" th:value="${f.nome}" required>
+                  </div>
+
+                  <div class="field">
+                    <label>Telefone</label>
+                    <input name="telefone" th:value="${f.telefone}">
+                  </div>
+
+                  <div class="field">
+                    <label>E-mail</label>
+                    <input name="email" type="email" th:value="${f.email}">
+                  </div>
+
+                  <div class="actions">
+                    <button class="btn btn-primary" type="submit">Salvar alterações</button>
+                  </div>
+                </form>
+              </details>
+            </td>
+          </tr>
+
+          <tr th:if="${#lists.isEmpty(fornecedores)}">
+            <td colspan="4" class="muted">Nenhum fornecedor cadastrado.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <details class="card mt add-form-panel" id="form-fornecedor">
+      <summary class="btn btn-primary">+ Adicionar fornecedor</summary>
+
+      <div class="add-form-content">
+        <div class="section-title">
+          <div>
+            <h3>Adicionar fornecedor</h3>
+            <p>Informe telefone, e-mail ou ambos.</p>
+          </div>
+        </div>
+
+        <form th:action="@{/fornecedores/criar}" method="post" class="form-grid">
+          <div class="field">
+            <label>Nome</label>
+            <input name="nome" placeholder="Nome do fornecedor" required>
+          </div>
+
+          <div class="field">
+            <label>Telefone</label>
+            <input name="telefone" placeholder="(61) 99999-9999">
+          </div>
+
+          <div class="field">
+            <label>E-mail</label>
+            <input name="email" type="email" placeholder="contato@fornecedor.com">
+          </div>
+
+          <div class="actions form-action">
+            <button class="btn btn-primary" type="submit">Cadastrar fornecedor</button>
+          </div>
+        </form>
+      </div>
+    </details>
+  </main>
+</div>
+</body>
+</html>

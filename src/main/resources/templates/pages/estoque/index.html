@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('NEXUS | Estoque')}"></head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments/layout :: sidebar('estoque')}"></div>
+
+    <main class="main">
+        <div th:replace="~{fragments/layout :: pageHeader('Estoque', 'Registre entradas, saídas, ajustes manuais e acompanhe auditoria.')}"></div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="grid operation-grid">
+            <form class="card" th:action="@{/estoque/entrada}" method="post">
+                <div class="section-title">
+                    <div>
+                        <h3>Entrada</h3>
+                        <p>Reposição ou compra.</p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Produto</label>
+                    <select name="produtoId" required>
+                        <option value="">Selecione</option>
+                        <option th:each="p : ${produtos}" th:value="${p.id}" th:selected="${p.id == produtoSelecionadoId}" th:text="${p.codigo + ' - ' + p.descricao}"></option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Quantidade</label>
+                    <input name="quantidade" type="number" min="1" required>
+                </div>
+
+                <div class="field">
+                    <label>Observação</label>
+                    <input name="observacao" placeholder="Compra, reposição etc.">
+                </div>
+
+                <button class="btn btn-green full" type="submit">Registrar entrada</button>
+            </form>
+
+            <form class="card" th:action="@{/estoque/saida}" method="post">
+                <div class="section-title">
+                    <div>
+                        <h3>Saída</h3>
+                        <p>Perda ou consumo interno.</p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Produto</label>
+                    <select name="produtoId" required>
+                        <option value="">Selecione</option>
+                        <option th:each="p : ${produtos}" th:value="${p.id}" th:selected="${p.id == produtoSelecionadoId}" th:text="${p.codigo + ' - ' + p.descricao}"></option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Quantidade</label>
+                    <input name="quantidade" type="number" min="1" required>
+                </div>
+
+                <div class="field">
+                    <label>Observação</label>
+                    <input name="observacao" placeholder="Perda, avaria etc.">
+                </div>
+
+                <button class="btn btn-yellow full" type="submit">Registrar saída</button>
+            </form>
+
+            <form class="card" th:action="@{/estoque/ajuste}" method="post">
+                <div class="section-title">
+                    <div>
+                        <h3>Ajuste manual</h3>
+                        <p>Exige justificativa.</p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Produto</label>
+                    <select name="produtoId" required>
+                        <option value="">Selecione</option>
+                        <option th:each="p : ${produtos}" th:value="${p.id}" th:selected="${p.id == produtoSelecionadoId}" th:text="${p.codigo + ' - ' + p.descricao}"></option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Nova quantidade</label>
+                    <input name="novaQuantidade" type="number" min="0" required>
+                </div>
+
+                <div class="field">
+                    <label>Justificativa</label>
+                    <textarea name="justificativa" required placeholder="Explique o motivo do ajuste"></textarea>
+                </div>
+
+                <button class="btn btn-primary full" type="submit">Registrar ajuste</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <div class="section-title">
+                <div>
+                    <h3>Histórico do produto</h3>
+                    <p>Selecione um produto para consultar movimentações e ajustes.</p>
+                </div>
+
+                <form th:action="@{/estoque}" method="get" class="search-form">
+                    <select name="produtoId" required>
+                        <option value="">Escolha um produto</option>
+                        <option th:each="p : ${produtos}" th:value="${p.id}" th:selected="${p.id == produtoSelecionadoId}" th:text="${p.codigo + ' - ' + p.descricao}"></option>
+                    </select>
+
+                    <button class="btn btn-primary" type="submit">Consultar</button>
+                </form>
+            </div>
+
+            <div class="split">
+                <div>
+                    <h4>Movimentações</h4>
+
+                    <div class="table-wrap compact-table">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Tipo</th>
+                                <th>Qtd.</th>
+                                <th>Obs.</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="m : ${movimentacoes}">
+                                <td th:text="${#temporals.format(m.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td><span class="badge" th:text="${m.tipo}"></span></td>
+                                <td th:text="${m.quantidade}"></td>
+                                <td th:text="${m.observacao}"></td>
+                            </tr>
+
+                            <tr th:if="${movimentacoes == null || #lists.isEmpty(movimentacoes)}">
+                                <td colspan="4" class="muted">Sem movimentações para exibir.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>Ajustes manuais</h4>
+
+                    <div class="table-wrap compact-table">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Usuário</th>
+                                <th>Antes</th>
+                                <th>Depois</th>
+                                <th>Justificativa</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="h : ${historicos}">
+                                <td th:text="${#temporals.format(h.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td th:text="${h.usuario}"></td>
+                                <td th:text="${h.quantidadeAnterior}"></td>
+                                <td th:text="${h.quantidadeNova}"></td>
+                                <td th:text="${h.justificativa}"></td>
+                            </tr>
+
+                            <tr th:if="${historicos == null || #lists.isEmpty(historicos)}">
+                                <td colspan="5" class="muted">Sem ajustes para exibir.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

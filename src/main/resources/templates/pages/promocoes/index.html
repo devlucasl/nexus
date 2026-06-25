@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('NEXUS | Promoções')}"></head>
+<body>
+<div class="app">
+  <div th:replace="~{fragments/layout :: sidebar('promocoes')}"></div>
+
+  <main class="main">
+    <div th:replace="~{fragments/layout :: pageHeader('Promoções', 'Cadastre descontos por produto e aplique automaticamente em consultas e vendas.')}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <section class="card" id="lista-promocoes">
+      <div class="section-title">
+        <div>
+          <h3>Promoções cadastradas</h3>
+          <p>Status calculado automaticamente conforme vigência e ativação.</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Tipo</th>
+            <th>Desconto</th>
+            <th>Vigência</th>
+            <th>Preço</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr th:each="promo : ${promocoes}">
+            <td>
+              <strong th:text="${promo.codigoProduto}">COD</strong><br>
+              <span th:text="${promo.descricaoProduto}">Produto</span>
+            </td>
+
+            <td th:text="${promo.tipoDesconto}">TIPO</td>
+
+            <td th:text="${promo.tipoDesconto == 'PERCENTUAL' ? promo.valorDesconto + '%' : #numbers.formatCurrency(promo.valorDesconto)}">
+              Desconto
+            </td>
+
+            <td>
+              <span th:text="${#temporals.format(promo.dataInicio, 'dd/MM/yyyy')}"></span>
+              até
+              <span th:text="${#temporals.format(promo.dataFim, 'dd/MM/yyyy')}"></span>
+            </td>
+
+            <td>
+              <span class="price-old" th:text="${#numbers.formatCurrency(promo.precoOriginal)}"></span>
+              <strong th:text="${#numbers.formatCurrency(promo.precoPromocional)}"></strong>
+            </td>
+
+            <td>
+                            <span class="badge"
+                                  th:classappend="${promo.statusAtual == 'ATIVA' ? 'ok' : (promo.statusAtual == 'PROGRAMADA' ? 'warn' : 'no')}"
+                                  th:text="${promo.statusAtual}">
+                            </span>
+            </td>
+          </tr>
+
+          <tr th:if="${#lists.isEmpty(promocoes)}">
+            <td colspan="6" class="muted">Nenhuma promoção cadastrada.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <details class="card mt add-form-panel" id="form-promocao">
+      <summary class="btn btn-primary">+ Adicionar promoção</summary>
+
+      <div class="add-form-content">
+        <div class="section-title">
+          <div>
+            <h3>Adicionar promoção</h3>
+            <p>Promoções ativas dentro do período são aplicadas automaticamente.</p>
+          </div>
+        </div>
+
+        <form th:action="@{/promocoes/criar}" method="post" class="form-grid">
+          <div class="field">
+            <label>Produto</label>
+            <select name="produtoId" required>
+              <option value="">Selecione</option>
+              <option th:each="p : ${produtos}"
+                      th:value="${p.id}"
+                      th:text="${p.codigo + ' - ' + p.descricao}">
+              </option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Tipo de desconto</label>
+            <select name="tipoDesconto" required>
+              <option th:each="tipo : ${tiposDesconto}" th:value="${tipo}" th:text="${tipo}"></option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Valor do desconto</label>
+            <input name="valorDesconto" type="number" step="0.01" min="0.01" required>
+          </div>
+
+          <div class="field">
+            <label>Data inicial</label>
+            <input name="dataInicio" type="date" th:value="${dataHoje}" required>
+          </div>
+
+          <div class="field">
+            <label>Data final</label>
+            <input name="dataFim" type="date" th:value="${dataHoje}" required>
+          </div>
+
+          <div class="field">
+            <label>Ativa?</label>
+            <select name="ativa">
+              <option value="true">Sim</option>
+              <option value="false">Não</option>
+            </select>
+          </div>
+
+          <div class="actions form-action">
+            <button class="btn btn-primary" type="submit">Cadastrar promoção</button>
+          </div>
+        </form>
+      </div>
+    </details>
+  </main>
+</div>
+</body>
+</html>

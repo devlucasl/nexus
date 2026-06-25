@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('NEXUS | Dashboard')}"></head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments/layout :: sidebar('dashboard')}"></div>
+
+    <main class="main">
+        <div th:replace="~{fragments/layout :: pageHeader('Dashboard', 'Resumo de disponibilidade, estoque baixo e consulta rápida de produtos.')}"></div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="grid kpi-grid">
+            <div class="card kpi">
+                <span>Produtos</span>
+                <strong th:text="${#lists.size(produtos)}">0</strong>
+            </div>
+
+            <div class="card kpi">
+                <span>Disponíveis</span>
+                <strong th:text="${produtos.?[disponivel].size()}">0</strong>
+            </div>
+
+            <div class="card kpi">
+                <span>Indisponíveis</span>
+                <strong th:text="${produtos.?[!disponivel].size()}">0</strong>
+            </div>
+
+            <div class="card kpi">
+                <span>Estoque baixo</span>
+                <strong th:text="${produtos.?[estoqueBaixo].size()}">0</strong>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="section-title">
+                <div>
+                    <h3>Consulta rápida</h3>
+                    <p>Pesquise produtos por nome e veja preço, promoção e status atualizado.</p>
+                </div>
+
+                <form th:action="@{/dashboard}" method="get" class="search-form">
+                    <input name="nome" th:value="${nomeBusca}" placeholder="Pesquisar por nome">
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </form>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Produto</th>
+                        <th>Preço</th>
+                        <th>Qtd.</th>
+                        <th>Status</th>
+                        <th>Alerta</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="p : ${produtos}">
+                        <td th:text="${p.codigo}"></td>
+
+                        <td>
+                            <strong th:text="${p.descricao}"></strong><br>
+                            <span class="muted" th:text="${p.categoria.nome}"></span>
+                        </td>
+
+                        <td>
+                            <span th:if="${p.promocaoAtiva}" class="price-old" th:text="${#numbers.formatCurrency(p.precoVenda)}"></span>
+                            <strong th:text="${#numbers.formatCurrency(p.precoPromocional)}"></strong>
+                            <span th:if="${p.promocaoAtiva}" class="badge promo">Promoção</span>
+                        </td>
+
+                        <td th:text="${p.quantidadeAtual}"></td>
+
+                        <td>
+                            <span class="badge" th:classappend="${p.disponivel} ? 'ok' : 'no'" th:text="${p.statusDisponibilidade}"></span>
+                        </td>
+
+                        <td>
+                            <span th:if="${p.estoqueBaixo}" class="badge warn">Estoque baixo</span>
+                            <span th:unless="${p.estoqueBaixo}" class="muted">Normal</span>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(produtos)}">
+                        <td colspan="6" class="muted">Nenhum produto encontrado.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

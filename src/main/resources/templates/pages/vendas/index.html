@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('NEXUS | Vendas')}"></head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments/layout :: sidebar('vendas')}"></div>
+
+    <main class="main">
+        <div th:replace="~{fragments/layout :: pageHeader('Vendas', 'Crie pedidos, adicione itens, finalize vendas e emita comprovantes.')}"></div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="card">
+            <div class="section-title">
+                <div>
+                    <h3>Pedidos de venda</h3>
+                    <p>Pedidos abertos podem receber itens. Vendas finalizadas baixam estoque automaticamente.</p>
+                </div>
+
+                <form th:action="@{/vendas/criar}" method="post">
+                    <button class="btn btn-primary" type="submit">+ Criar pedido de venda</button>
+                </form>
+            </div>
+
+            <div class="pedido-list">
+                <article class="pedido-card" th:each="pedido : ${pedidos}" th:id="${'pedido-' + pedido.id}">
+                    <div class="pedido-head">
+                        <div>
+                            <h4 th:text="${pedido.numero}">PED-000</h4>
+                            <p class="muted">
+                                Aberto por <span th:text="${pedido.usuario}"></span>
+                                em <span th:text="${#temporals.format(pedido.dataAbertura, 'dd/MM/yyyy HH:mm')}"></span>
+                            </p>
+                        </div>
+
+                        <div class="pedido-status">
+                            <span class="badge"
+                                  th:classappend="${pedido.status == 'ABERTO' ? 'warn' : (pedido.status == 'FINALIZADO' ? 'ok' : 'no')}"
+                                  th:text="${pedido.status}">
+                            </span>
+
+                            <strong th:text="${#numbers.formatCurrency(pedido.valorTotal)}">R$ 0,00</strong>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap compact-table mt-sm">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Qtd.</th>
+                                <th>Unitário</th>
+                                <th>Desconto</th>
+                                <th>Subtotal</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="item : ${pedido.itens}">
+                                <td>
+                                    <strong th:text="${item.codigoProduto}"></strong>
+                                    -
+                                    <span th:text="${item.descricaoProduto}"></span>
+                                </td>
+
+                                <td th:text="${item.quantidade}"></td>
+                                <td th:text="${#numbers.formatCurrency(item.precoUnitario)}"></td>
+                                <td th:text="${#numbers.formatCurrency(item.descontoAplicado)}"></td>
+                                <td th:text="${#numbers.formatCurrency(item.subtotal)}"></td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(pedido.itens)}">
+                                <td colspan="5" class="muted">Nenhum item adicionado.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <details th:if="${pedido.status == 'ABERTO'}" class="inline-add-details mt-sm">
+                        <summary class="btn btn-primary">+ Adicionar item ao pedido</summary>
+
+                        <form th:action="@{/vendas/{id}/itens(id=${pedido.id})}" method="post" class="form-grid add-item-form">
+                            <div class="field">
+                                <label>Produto</label>
+                                <select name="produtoId" required>
+                                    <option value="">Selecione</option>
+                                    <option th:each="p : ${produtos}"
+                                            th:if="${p.disponivel}"
+                                            th:value="${p.id}"
+                                            th:text="${p.codigo + ' - ' + p.descricao + ' | ' + #numbers.formatCurrency(p.precoPromocional)}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Quantidade</label>
+                                <input name="quantidade" type="number" min="1" required>
+                            </div>
+
+                            <div class="actions form-action">
+                                <button class="btn btn-primary" type="submit">Adicionar item</button>
+                            </div>
+                        </form>
+                    </details>
+
+                    <div class="actions mt-sm">
+                        <form th:if="${pedido.status == 'ABERTO'}"
+                              th:action="@{/vendas/{id}/finalizar(id=${pedido.id})}"
+                              method="post"
+                              class="inline-form">
+                            <button class="btn btn-green" type="submit">Finalizar venda</button>
+                        </form>
+
+                        <form sec:authorize="hasRole('ADMINISTRADOR')"
+                              th:if="${pedido.status == 'FINALIZADO'}"
+                              th:action="@{/vendas/{id}/cancelar(id=${pedido.id})}"
+                              method="post"
+                              class="inline-form">
+                            <button class="btn btn-danger" type="submit">Cancelar e estornar</button>
+                        </form>
+
+                        <a th:if="${pedido.status == 'FINALIZADO' || pedido.status == 'CANCELADO'}"
+                           class="btn"
+                           th:href="@{/vendas/{id}/comprovante(id=${pedido.id})}">
+                            Ver comprovante
+                        </a>
+                    </div>
+                </article>
+
+                <div th:if="${#lists.isEmpty(pedidos)}" class="empty-state">
+                    <h3>Nenhum pedido criado ainda.</h3>
+                    <p>Use o botão acima para iniciar a primeira venda.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

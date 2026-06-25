@@ -1,0 +1,21 @@
+2026-06-25 19:07:04.470561-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]PERFIL PERFIL SENHA_HASH ULTIMOATIVO _ACESSO"; expected "PREPARE"; SQL statement:
+PERFIL PERFIL SENHA_HASH ULTIMOATIVO _ACESSO [42001-232]
+2026-06-25 19:07:08.845468-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]NOME"; SQL statement:
+NOME [42000-232]
+2026-06-25 19:07:12.337124-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]NOME USUARIOS"; SQL statement:
+NOME USUARIOS [42000-232]
+2026-06-25 19:07:17.976162-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]NOME USUARIOS"; SQL statement:
+NOME USUARIOS [42000-232]
+2026-06-25 19:07:18.679918-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]NOME USUARIOS"; SQL statement:
+NOME USUARIOS [42000-232]
+2026-06-25 19:07:30.693168-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]ID"; expected "INSERT"; SQL statement:
+ID [42001-232]
+2026-06-25 19:07:33.060865-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]ID"; expected "INSERT"; SQL statement:
+ID [42001-232]

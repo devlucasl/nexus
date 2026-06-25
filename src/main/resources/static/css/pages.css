@@ -1,0 +1,248 @@
+.login-body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #0f172a, #1d4ed8);
+}
+
+.login-card {
+    width: min(430px, 92vw);
+    background: white;
+    border-radius: 24px;
+    padding: 36px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .35);
+}
+
+.login-brand {
+    margin-bottom: 24px;
+}
+
+.login-brand h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.subtitle {
+    color: var(--muted);
+    margin-bottom: 0;
+}
+
+.hint {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 16px;
+}
+
+.kpi-grid {
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+}
+
+.kpi span {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.kpi strong {
+    display: block;
+    font-size: 31px;
+    margin-top: 8px;
+}
+
+.operation-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pedido-list {
+    display: grid;
+    gap: 16px;
+}
+
+.pedido-card {
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    background: #fff;
+}
+
+.pedido-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.pedido-head h4 {
+    margin-bottom: 4px;
+}
+
+.pedido-head p {
+    margin-bottom: 0;
+}
+
+.pedido-status {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pedido-status strong {
+    font-size: 20px;
+}
+
+.add-item-form {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 16px;
+    background: var(--soft);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 36px;
+    border: 1px dashed var(--border);
+    border-radius: 18px;
+    color: var(--muted);
+}
+
+.empty-state h3 {
+    color: var(--text);
+}
+
+.receipt-card {
+    max-width: 820px;
+    margin: 0 auto;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+}
+
+.receipt-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+}
+
+.receipt-header h1 {
+    margin: 0;
+}
+
+.receipt-header p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.receipt-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 18px;
+    margin-bottom: 18px;
+}
+
+.receipt-table tfoot td {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.receipt-text {
+    margin-top: 18px;
+    background: var(--soft);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    white-space: pre-wrap;
+}
+
+@media print {
+    .sidebar,
+    .print-hide {
+        display: none !important;
+    }
+
+    .app {
+        display: block;
+    }
+
+    .main {
+        padding: 0;
+    }
+
+    .receipt-card {
+        box-shadow: none;
+        border: 0;
+    }
+}
+
+@media (max-width: 1100px) {
+    .operation-grid,
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pedido-head {
+        display: block;
+    }
+
+    .pedido-status {
+        align-items: flex-start;
+        margin-top: 12px;
+    }
+
+    .receipt-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .register-card {
+        width: min(500px, 92vw);
+    }
+
+    .auth-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 13px;
+        margin: 18px 0;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+        content: "";
+        height: 1px;
+        flex: 1;
+        background: var(--border);
+    }
+
+    .btn-secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .btn-secondary:hover {
+        background: #cbd5e1;
+    }
+
+    .security-note {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e3a8a;
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+
+    .field-help {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: -2px;
+    }
+
+}
