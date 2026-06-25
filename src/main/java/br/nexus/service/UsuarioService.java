@@ -1,12 +1,17 @@
 package br.nexus.service;
 
+import br.nexus.dto.request.AlterarPerfilUsuarioRequest;
 import br.nexus.dto.request.CadastroUsuarioRequest;
+import br.nexus.dto.response.UsuarioResponse;
 import br.nexus.exception.BusinessException;
 import br.nexus.exception.ResourceNotFoundException;
 import br.nexus.model.PerfilUsuario;
 import br.nexus.model.Usuario;
 import br.nexus.repository.UsuarioRepository;
 import java.time.LocalDateTime;
+import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +64,32 @@ public class UsuarioService {
         usuario.setAtivo(true);
 
         return usuarioRepository.save(usuario);
+    }
+
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public List<UsuarioResponse> listarUsuarios() {
+        return usuarioRepository.findAllByOrderByNomeAsc()
+                .stream()
+                .map(UsuarioResponse::from)
+                .toList();
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public UsuarioResponse alterarPerfil(Long usuarioId, AlterarPerfilUsuarioRequest request) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+
+        String loginAtual = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (usuario.getLogin().equals(loginAtual)) {
+            throw new BusinessException("Você não pode alterar o próprio perfil por segurança.");
+        }
+
+        usuario.setPerfil(request.perfil());
+
+        return UsuarioResponse.from(usuarioRepository.save(usuario));
     }
 
     private void validarCadastro(CadastroUsuarioRequest request) {

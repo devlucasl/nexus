@@ -23,7 +23,6 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
 
-                        // Arquivos públicos
                         .requestMatchers(
                                 "/css/**",
                                 "/js/**",
@@ -35,7 +34,6 @@ public class SecurityConfig {
                                 "/api/auth/login"
                         ).permitAll()
 
-                        // Telas públicas para usuários autenticados: ADMINISTRADOR e FUNCIONARIO
                         .requestMatchers(HttpMethod.GET,
                                 "/",
                                 "/dashboard",
@@ -44,7 +42,6 @@ public class SecurityConfig {
                                 "/vendas/**"
                         ).authenticated()
 
-                        // Consulta de produtos pela API: ADMINISTRADOR e FUNCIONARIO
                         .requestMatchers(HttpMethod.GET,
                                 "/api/produtos",
                                 "/api/produtos/**",
@@ -53,7 +50,6 @@ public class SecurityConfig {
                                 "/api/vendas/**"
                         ).authenticated()
 
-                        // Ações administrativas em produtos
                         .requestMatchers(HttpMethod.POST,
                                 "/produtos/criar",
                                 "/produtos/*/editar",
@@ -74,48 +70,32 @@ public class SecurityConfig {
                                 "/api/produtos/**"
                         ).hasRole("ADMINISTRADOR")
 
-                        // Estoque: somente administrador
                         .requestMatchers(
+                                "/usuarios",
+                                "/usuarios/**",
                                 "/estoque",
                                 "/estoque/**",
-                                "/api/estoque/**"
-                        ).hasRole("ADMINISTRADOR")
-
-                        // Categorias: somente administrador
-                        .requestMatchers(
                                 "/categorias",
                                 "/categorias/**",
-                                "/api/categorias/**"
-                        ).hasRole("ADMINISTRADOR")
-
-                        // Fornecedores: somente administrador
-                        .requestMatchers(
                                 "/fornecedores",
                                 "/fornecedores/**",
-                                "/api/fornecedores/**"
-                        ).hasRole("ADMINISTRADOR")
-
-                        // Promoções: somente administrador
-                        .requestMatchers(
                                 "/promocoes",
                                 "/promocoes/**",
-                                "/api/promocoes/**"
-                        ).hasRole("ADMINISTRADOR")
-
-                        // Relatórios: somente administrador
-                        .requestMatchers(
                                 "/relatorios",
                                 "/relatorios/**",
+                                "/api/usuarios/**",
+                                "/api/estoque/**",
+                                "/api/categorias/**",
+                                "/api/fornecedores/**",
+                                "/api/promocoes/**",
                                 "/api/relatorios/**"
                         ).hasRole("ADMINISTRADOR")
 
-                        // Cancelamento de venda: somente administrador
                         .requestMatchers(HttpMethod.POST,
                                 "/vendas/*/cancelar",
                                 "/api/vendas/*/cancelar"
                         ).hasRole("ADMINISTRADOR")
 
-                        // Demais ações de venda: usuário autenticado
                         .requestMatchers(
                                 "/vendas",
                                 "/vendas/**",

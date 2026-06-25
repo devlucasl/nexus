@@ -22,6 +22,7 @@
     </div>
 
     <nav class="nav">
+        <a sec:authorize="hasRole('ADMINISTRADOR')" th:classappend="${active == 'usuarios'} ? 'active'" th:href="@{/usuarios}">Usuários</a>
         <a th:classappend="${active == 'dashboard'} ? 'active'" th:href="@{/dashboard}">Dashboard</a>
         <a th:classappend="${active == 'produtos'} ? 'active'" th:href="@{/produtos}">Produtos</a>
         <a th:classappend="${active == 'vendas'} ? 'active'" th:href="@{/vendas}">Vendas</a>

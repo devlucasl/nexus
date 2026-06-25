@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('NEXUS | Usuários')}"></head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments/layout :: sidebar('usuarios')}"></div>
+
+    <main class="main">
+        <div th:replace="~{fragments/layout :: pageHeader('Usuários', 'Gerencie os perfis de acesso dos usuários cadastrados.')}"></div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="card">
+            <div class="section-title">
+                <div>
+                    <h3>Usuários cadastrados</h3>
+                    <p>Promova usuários para administrador ou mantenha acesso operacional como funcionário.</p>
+                </div>
+            </div>
+
+            <div class="security-note">
+                <strong>Segurança:</strong>
+                cadastros públicos entram como <strong>FUNCIONARIO</strong>. Apenas um administrador pode alterar o perfil.
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Login</th>
+                        <th>Perfil atual</th>
+                        <th>Status</th>
+                        <th>Último acesso</th>
+                        <th>Alterar perfil</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td>
+                            <strong th:text="${usuario.nome}">Nome</strong>
+                        </td>
+
+                        <td th:text="${usuario.login}">login</td>
+
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${usuario.perfil == 'ADMINISTRADOR'} ? 'ok' : 'warn'"
+                                  th:text="${usuario.perfil}">
+                                PERFIL
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${usuario.ativo} ? 'ok' : 'no'"
+                                  th:text="${usuario.ativo ? 'ATIVO' : 'INATIVO'}">
+                                ATIVO
+                            </span>
+                        </td>
+
+                        <td>
+                            <span th:if="${usuario.ultimoAcesso != null}"
+                                  th:text="${#temporals.format(usuario.ultimoAcesso, 'dd/MM/yyyy HH:mm')}">
+                            </span>
+
+                            <span th:unless="${usuario.ultimoAcesso != null}" class="muted">
+                                Nunca acessou
+                            </span>
+                        </td>
+
+                        <td>
+                            <form th:action="@{/usuarios/{id}/perfil(id=${usuario.id})}" method="post" class="actions">
+                                <select name="perfil" required>
+                                    <option th:each="perfil : ${perfis}"
+                                            th:value="${perfil}"
+                                            th:selected="${perfil.name() == usuario.perfil}"
+                                            th:text="${perfil}">
+                                    </option>
+                                </select>
+
+                                <button class="btn btn-primary btn-sm" type="submit">
+                                    Salvar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(usuarios)}">
+                        <td colspan="6" class="muted">Nenhum usuário cadastrado.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>
